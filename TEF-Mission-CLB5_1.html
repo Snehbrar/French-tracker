@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0a">
+<title>Mission CLB 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --card: #141414;
+  --card-border: #1e1e1e;
+  --card-hover: #1a1a1a;
+  --gold: #e8c547;
+  --gold-dim: #b89a30;
+  --gold-glow: rgba(232, 197, 71, 0.12);
+  --green: #4ade80;
+  --green-dim: #22633a;
+  --blue: #60a5fa;
+  --pink: #f472b6;
+  --orange: #fb923c;
+  --text: #f0f0f0;
+  --text-2: #a0a0a0;
+  --text-3: #606060;
+  --text-4: #3a3a3a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: 0 20px 120px;
+  -webkit-tap-highlight-color: transparent;
+  max-width: 500px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ====== SCROLL ANIMATIONS ====== */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ====== HEADER ====== */
+.header {
+  padding: 40px 0 24px;
+  text-align: center;
+}
+.header-flag {
+  font-size: 36px;
+  margin-bottom: 8px;
+  display: block;
+}
+.header h1 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+.header p {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+}
+
+/* ====== STATS ====== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin: 20px 0;
+}
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 20px 10px;
+  text-align: center;
+  transition: border-color 0.3s;
+}
+.stat-card:hover { border-color: #2a2a2a; }
+.stat-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.stat-label {
+  font-size: 10px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 8px;
+}
+
+/* ====== PROGRESS ====== */
+.progress-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 24px 20px;
+  margin-bottom: 20px;
+}
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+.progress-label {
+  font-size: 12px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+.progress-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 36px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.progress-track {
+  height: 8px;
+  background: #1a1a1a;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--orange));
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+.progress-sub {
+  font-size: 11px;
+  color: var(--text-4);
+  margin-top: 10px;
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ====== FRENCH TIP ====== */
+.tip-card {
+  background: var(--card);
+  border: 1px solid #2a2200;
+  border-radius: 16px;
+  padding: 24px 20px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.tip-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.tip-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.tip-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tip-badge::before {
+  content: '';
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+.tip-refresh {
+  background: none;
+  border: 1px solid #333;
+  color: var(--text-3);
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.tip-refresh:active { background: #1a1a1a; border-color: var(--gold-dim); color: var(--gold); }
+.tip-french {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.tip-english {
+  font-size: 14px;
+  color: var(--text-2);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.tip-detail {
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.6;
+  padding-top: 12px;
+  border-top: 1px solid #1e1e1e;
+}
+
+/* ====== TIMER ====== */
+.timer-card {
+  background: var(--card);
+  border: 1px solid var(--gold-dim);
+  border-radius: 16px;
+  padding: 24px 20px;
+  margin-bottom: 20px;
+  display: none;
+  box-shadow: 0 0 30px var(--gold-glow);
+}
+.timer-card.active { display: block; }
+.timer-meta {
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+.timer-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.timer-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 52px;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 2px;
+  margin: 12px 0;
+}
+.timer-track {
+  height: 4px;
+  background: #1a1a1a;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.timer-track-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: width 1s linear;
+}
+.timer-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.timer-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: transform 0.1s;
+}
+.timer-btn:active { transform: scale(0.96); }
+.timer-btn-start { background: var(--gold); color: #0a0a0a; }
+.timer-btn-stop { background: #1a1a1a; color: #ff6b6b; border: 1px solid #331a1a; }
+
+/* ====== SECTION DIVIDER ====== */
+.section-div {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-4);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin: 28px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+/* ====== COMMUTE NOTE ====== */
+.commute-note {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--text-3);
+  border-radius: 0 12px 12px 0;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.6;
+}
+.commute-note strong { color: var(--text-2); }
+
+/* ====== DAY CARDS ====== */
+.day-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease, border-color 0.3s, box-shadow 0.3s;
+}
+.day-card.locked {
+  opacity: 0.25;
+  pointer-events: none;
+}
+.day-card.completed {
+  border-color: var(--green-dim);
+  background: #0f1a0f;
+}
+.day-card.today-active {
+  border-color: var(--gold);
+  box-shadow: 0 0 24px var(--gold-glow), inset 0 1px 0 rgba(232,197,71,0.1);
+}
+
+.day-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  cursor: pointer;
+  user-select: none;
+  min-height: 64px;
+}
+.day-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.day-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+.day-card.locked .day-name { color: var(--text-4); }
+.day-card.completed .day-name { color: var(--green); }
+
+.shift-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+.pill-off { background: #0f200f; color: #4ade80; border: 1px solid #1a3a1a; }
+.pill-work { background: #0f1520; color: #60a5fa; border: 1px solid #1a2540; }
+.pill-rest { background: #200f20; color: #c084fc; border: 1px solid #301a30; }
+
+.day-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.day-hrs {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-3);
+}
+.day-card.completed .day-hrs { color: var(--green-dim); }
+
+.day-status {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid #2a2a2a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+.day-card.completed .day-status {
+  background: var(--green);
+  border-color: var(--green);
+}
+.day-card.completed .day-status::after {
+  content: '✓';
+  color: #0a0a0a;
+  font-size: 12px;
+  font-weight: 800;
+}
+.day-card.today-active .day-status { border-color: var(--gold); }
+
+.day-arrow {
+  font-size: 16px;
+  color: var(--text-4);
+  transition: transform 0.3s, color 0.3s;
+}
+.day-card.expanded .day-arrow { transform: rotate(90deg); color: var(--text-2); }
+.day-card.locked .day-arrow { display: none; }
+
+/* Day body */
+.day-body {
+  display: none;
+  padding: 0 20px 20px;
+  border-top: 1px solid #1a1a1a;
+  animation: slideDown 0.3s ease;
+}
+.day-card.expanded .day-body { display: block; }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Reminder inside day */
+.day-remind {
+  background: #1a1600;
+  border: 1px solid #332e00;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 14px 0;
+  font-size: 13px;
+  color: var(--gold);
+  line-height: 1.5;
+}
+
+/* Sessions */
+.session-block {
+  margin: 16px 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #1a1a1a;
+}
+.session-block:last-of-type { border-bottom: none; padding-bottom: 0; }
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.session-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.session-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.session-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-4);
+}
+.session-start-btn {
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #2a2a2a;
+  background: #1a1a1a;
+  color: var(--text-3);
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.session-start-btn:active { background: #222; border-color: var(--gold-dim); color: var(--gold); }
+
+/* Tasks */
+.task-row {
+  display: flex;
+  gap: 14px;
+  padding: 10px 0;
+  align-items: flex-start;
+}
+.task-check {
+  width: 22px; height: 22px;
+  min-width: 22px;
+  border: 2px solid #2a2a2a;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  transition: all 0.2s;
+  background: transparent;
+}
+.task-check.checked {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.task-check.checked::after {
+  content: '✓';
+  color: #0a0a0a;
+  font-size: 12px;
+  font-weight: 800;
+}
+.task-check.off { cursor: default; opacity: 0.15; }
+.task-row.done .task-content { opacity: 0.3; }
+.task-row.done .task-title { text-decoration: line-through; }
+
+.task-content { flex: 1; }
+.task-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #eee;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+.task-desc {
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.6;
+}
+.skill-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  margin-right: 5px;
+  text-transform: uppercase;
+}
+.sk-speak { background: #2a1525; color: var(--pink); }
+.sk-listen { background: #151f2a; color: var(--blue); }
+.sk-vocab { background: #152a1a; color: var(--green); }
+.sk-mock { background: #2a2010; color: var(--orange); }
+
+/* Complete day button */
+.complete-day-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin-top: 16px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  color: var(--text-3);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.complete-day-btn:active { background: #222; transform: scale(0.98); }
+.complete-day-btn.finished {
+  background: var(--green-dim);
+  color: var(--green);
+  border-color: var(--green-dim);
+}
+
+/* Phase 2 */
+.phase2-card {
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 24px 20px;
+  margin-top: 28px;
+  background: var(--card);
+}
+.phase2-card h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.phase2-card p {
+  font-size: 13px;
+  color: var(--text-4);
+  line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-4);
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #1a1a1a;
+  line-height: 1.8;
+}
+.reset-btn {
+  display: inline-block;
+  margin-top: 10px;
+  background: none;
+  border: 1px solid #1e1e1e;
+  color: var(--text-4);
+  font-size: 11px;
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+.reset-btn:active { background: #1a1a1a; }
+</style>
+</head>
+<body>
+
+<div class="header reveal">
+  <span class="header-flag">🇫🇷</span>
+  <h1>Mission CLB 5</h1>
+  <p>TEF Canada · April 8 · Edmonton</p>
+</div>
+
+<div class="stats-grid reveal">
+  <div class="stat-card"><div class="stat-num" id="daysLeft">—</div><div class="stat-label">Days left</div></div>
+  <div class="stat-card"><div class="stat-num" id="daysDone">0</div><div class="stat-label">Done</div></div>
+  <div class="stat-card"><div class="stat-num" id="hrsDone">0</div><div class="stat-label">Hours</div></div>
+</div>
+
+<div class="progress-card reveal">
+  <div class="progress-top">
+    <span class="progress-label">Phase 1</span>
+    <div class="progress-pct" id="pPct">0%</div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+  <div class="progress-sub" id="pSub">0 / 13 days · 0 of 72 hrs</div>
+</div>
+
+<div class="tip-card reveal" id="tipCard">
+  <div class="tip-top">
+    <div class="tip-badge">Le saviez-vous?</div>
+    <button class="tip-refresh" onclick="newTip()">↻ New tip</button>
+  </div>
+  <div class="tip-french" id="tFr"></div>
+  <div class="tip-english" id="tEn"></div>
+  <div class="tip-detail" id="tEx"></div>
+</div>
+
+<div class="timer-card" id="timerCard">
+  <div class="timer-meta">Current session</div>
+  <div class="timer-name" id="tmName">—</div>
+  <div class="timer-display" id="tmDisp">00:00</div>
+  <div class="timer-track"><div class="timer-track-fill" id="tmFill" style="width:100%"></div></div>
+  <div class="timer-actions">
+    <button class="timer-btn timer-btn-start" id="tmToggle" onclick="tmToggle()">Start</button>
+    <button class="timer-btn timer-btn-stop" onclick="tmStop()">Reset</button>
+  </div>
+</div>
+
+<div class="section-div reveal">Schedule</div>
+<div class="commute-note reveal"><strong>Commute bonus:</strong> 75 min/day driving = French podcasts + shadowing. ~17 extra hours by Mar 21.</div>
+
+<div id="daysList"></div>
+
+<div class="phase2-card reveal">
+  <h3>Phase 2 · Vacation · Mar 22 – Apr 8</h3>
+  <p>18 days × 8 hrs = ~144 hours of full-time study. Daily mock exams, speaking with tutors, intensive listening. Ask Claude to build Phase 2 when ready.</p>
+</div>
+
+<div class="footer reveal">
+  Phase 1: ~72 hrs study + ~17 hrs commute<br>
+  Off days: 8h · Work days: 4h · Rest: Mar 11<br>
+  <button class="reset-btn" onclick="if(confirm('Reset all progress?')){localStorage.removeItem(LS);location.reload()}">Reset progress</button>
+</div>
+
+<script>
+// ===== TIPS =====
+const TIPS=[
+{fr:"\"Actuellement\" ≠ Actually",en:"It means \"currently\", not \"actually\"",ex:"\"Actually\" in French is \"en fait\". One of the most common false friends. \"Actuellement, je travaille à Vancouver\" = Currently, I work in Vancouver."},
+{fr:"\"Je suis excité(e)\" — careful!",en:"In French this has a sexual connotation",ex:"Use \"Je suis enthousiaste\" or \"J'ai hâte\" instead. \"J'ai hâte de passer mon examen\" = I'm excited about my exam."},
+{fr:"On = We (in spoken French)",en:"\"On\" replaces \"nous\" in 90% of conversation",ex:"\"On va au cinéma\" is much more natural than \"Nous allons au cinéma\". TEF examiners expect \"on\" in casual speech."},
+{fr:"Ne...pas: the \"ne\" disappears",en:"In spoken French, negation drops the \"ne\"",ex:"You'll hear \"Je sais pas\" instead of \"Je ne sais pas\". Train your ear for this in listening. In speaking, full negation sounds more polished."},
+{fr:"\"Coup\" has 20+ expressions",en:"One word, endless meanings",ex:"Coup de téléphone (call), coup de soleil (sunburn), coup de foudre (love at first sight), tout à coup (suddenly), du coup (so/therefore)."},
+{fr:"C'est vs Il est",en:"Both mean 'it is' but differ in usage",ex:"C'est + noun: \"C'est un bon film\". Il est + adjective alone: \"Il est intéressant\". This distinction shows B1 grammar control."},
+{fr:"Passé composé: 17 verbs use être",en:"DR MRS VANDERTRAMP mnemonic",ex:"Devenir, Revenir, Monter, Rester, Sortir, Venir, Aller, Naître, Descendre, Entrer, Retourner, Tomber, Rentrer, Arriver, Mourir, Partir. Plus all reflexive verbs."},
+{fr:"French numbers: 70 = 60 + 10",en:"Soixante-dix, quatre-vingts, quatre-vingt-dix",ex:"75 = soixante-quinze, 92 = quatre-vingt-douze, 99 = quatre-vingt-dix-neuf. TEF loves testing numbers in listening."},
+{fr:"\"Du coup\" = So / Therefore",en:"The most common spoken connector",ex:"\"J'étais fatigué, du coup je suis resté à la maison.\" Using \"du coup\" shows natural fluency. Examiners love it."},
+{fr:"Silent final consonants",en:"Most final consonants aren't pronounced",ex:"Exceptions: C, R, F, L (think \"CaReFuL\"). \"petit\" = puh-TEE, but \"cher\" = SHARE. This rule fixes 50% of pronunciation errors."},
+{fr:"\"Quand même\" = still / anyway",en:"One of the most versatile expressions",ex:"\"C'est quand même bizarre\" (still weird), \"Merci quand même\" (thanks anyway). Sounds natural in TEF speaking."},
+{fr:"Liaison: silent consonants link up",en:"Final consonants connect to next vowel",ex:"\"Les‿amis\" (lez-ami), \"un‿homme\" (un-nom). Critical for both listening comprehension and speaking fluency."},
+{fr:"\"Bref\" = In short / Anyway",en:"Summarizer and topic-changer",ex:"\"J'ai eu des problèmes, bref, tout va bien.\" Great TEF tool to wrap up a point quickly."},
+{fr:"Subjunctive: key triggers for B1",en:"\"Il faut que\" + subjunctive",ex:"Just learn: soit (être), ait (avoir), fasse (faire), puisse (pouvoir), sache (savoir). Five irregular forms = B1 grammar boost."},
+{fr:"\"En fait\" = Actually / Well, really",en:"Different from English \"in fact\"",ex:"\"En fait, je préfère le thé\" = Actually, I prefer tea. Use it to correct yourself in speaking — shows self-awareness."},
+{fr:"\"Ça fait\" for duration",en:"Like English 'it's been'",ex:"\"Ça fait trois mois que j'étudie le français\" = I've been studying French for 3 months. More natural than \"depuis\" in conversation."},
+{fr:"Y and En — two magic words",en:"Replace locations and quantities",ex:"\"Tu vas à Paris? — Oui, j'y vais\" (there). \"Tu veux du café? — Oui, j'en veux\" (some). B1 speaking gold."},
+{fr:"French R = throat, not tongue",en:"Gargle gently — that's the French R",ex:"Practice: rouge, rue, rare, rire. Don't roll it. A soft throat R is what examiners expect."},
+{fr:"Nasal vowels: the B1 sound",en:"ON (bon), AN (dans), IN (vin), UN (brun)",ex:"Practice: \"un bon vin blanc\" — four nasals in one phrase. This separates A2 from B1 pronunciation."},
+{fr:"Imparfait = background / habit",en:"Passé composé = completed event",ex:"\"Je regardais la télé (background) quand le téléphone a sonné (event).\" The biggest B1 grammar marker."},
+{fr:"Conditional = politeness",en:"\"Je voudrais\" is polite, \"Je veux\" is blunt",ex:"Always use conditional in TEF speaking for requests: \"Je voudrais\", \"Pourriez-vous\", \"Ce serait bien si...\"."},
+{fr:"\"Malgré\" = Despite",en:"Great for argumentative speaking",ex:"\"Malgré les difficultés, je reste optimiste.\" Shows B1 level argumentation in TEF Section B."},
+{fr:"\"Soit... soit\" = Either... or",en:"For presenting alternatives",ex:"\"Soit on va au cinéma, soit on reste à la maison.\" Great for TEF speaking structure."},
+{fr:"\"Cependant\" vs \"Pourtant\"",en:"Both = 'however' but with different feels",ex:"Cependant = formal however. Pourtant = yet (implies surprise). \"Il pleut, pourtant il fait chaud.\""},
+{fr:"\"En revanche\" = On the other hand",en:"More formal than \"par contre\"",ex:"\"Le prix est élevé. En revanche, la qualité est excellente.\" TEF examiners prefer this — sounds structured."},
+{fr:"\"Si\" for contradicting negatives",en:"\"Si\" = yes when correcting a no",ex:"\"Tu ne parles pas français? — Si!\" (Yes I do!). \"Oui\" only answers positive questions."},
+{fr:"Stress = last syllable always",en:"French rhythm ≠ English rhythm",ex:"English: CAN-a-da. French: ca-na-DA. Mastering this alone makes you sound 50% more French."},
+{fr:"\"Dont\" = of which / whose",en:"Replaces \"de\" + relative pronoun",ex:"\"Le film dont je parle\" = The film I'm talking about (parler DE). Using \"dont\" correctly = pure B1."},
+{fr:"\"Tout à fait\" = Absolutely",en:"Best agreement phrase in French",ex:"Examiner says something → \"Oui, tout à fait.\" Then expand. Shows active listening AND natural French."},
+{fr:"Three ways to ask questions",en:"Intonation, Est-ce que, Inversion",ex:"\"Tu viens?\" (casual) > \"Est-ce que tu viens?\" (neutral) > \"Viens-tu?\" (formal). Use the first two in TEF."},
+{fr:"\"Faire\" = Swiss Army knife verb",en:"Faire + noun replaces many verbs",ex:"Faire du sport, faire la cuisine, faire les courses, faire attention, faire semblant. Learn these chunks."},
+{fr:"\"Grâce à\" vs \"À cause de\"",en:"Both = because of, but + vs −",ex:"\"Grâce à mon prof\" (positive/thanks to). \"À cause de la pluie\" (negative/because of). Shows nuance."},
+{fr:"\"N'importe\" = Any / Whatever",en:"qui (anyone), quoi (anything), où (anywhere)",ex:"\"On peut aller n'importe où\" = We can go anywhere. Shows B1 vocabulary range."},
+{fr:"\"Par conséquent\" = Consequently",en:"Formal cause-effect connector",ex:"\"Il n'a pas étudié, par conséquent il a échoué.\" Using this in Section B shows logical argumentation."},
+{fr:"24-hour clock in French",en:"\"15h00\" not \"3 PM\"",ex:"You'll hear \"quinze heures\" in listening. Practice converting: 17h = 5pm, 21h = 9pm. TEF tests this."},
+{fr:"Gender patterns in endings",en:"Predict masculine/feminine ~80% of the time",ex:"-tion, -sion, -ure, -ette, -ence = feminine. -ment, -age, -isme, -eau = masculine."},
+{fr:"\"Bien que\" + subjunctive",en:"= Although — a B1 connector",ex:"\"Bien que ce soit difficile, je continue.\" Subjunctive after \"bien que\" = B1 grammar marker."},
+{fr:"\"Ça m'est égal\" = I don't mind",en:"Neutral, not rude",ex:"\"Thé ou café? — Ça m'est égal.\" Shows casual French beyond textbook answers."},
+{fr:"\"En ce qui concerne\" = Regarding",en:"Topic introducer for monologues",ex:"\"En ce qui concerne l'éducation, je pense que...\" Perfect TEF Section B opening."},
+{fr:"\"Avoir beau\" = No matter how much",en:"Unique French construction",ex:"\"J'ai beau étudier, je ne comprends pas\" = No matter how much I study, I don't understand."},
+{fr:"\"Plutôt\" = Rather / Quite",en:"Softener and preference word",ex:"\"C'est plutôt intéressant.\" \"Je préfère plutôt rester.\" Versatile and natural."},
+{fr:"Faux amis: \"librairie\" = bookstore",en:"Library = bibliothèque",ex:"More: \"monnaie\" = change, \"assister\" = attend, \"regarder\" = watch. TEF listening loves false friends."},
+{fr:"Partitive: du, de la, de l'",en:"\"Some\" — required in French",ex:"\"Je veux du pain\" (I want bread). After negation changes to \"de\": \"Je ne veux pas DE pain.\""},
+{fr:"\"Mettre\" has many meanings",en:"To put, wear, take time, turn on",ex:"Mettre la table, mettre un manteau, mettre du temps, mettre la radio. Context is everything."},
+{fr:"Qui vs Que in relatives",en:"Qui = subject, Que = object",ex:"\"L'homme QUI parle\" (he speaks). \"L'homme QUE je vois\" (I see him). B1 grammar essential."},
+{fr:"\"Ça vaut le coup\" = It's worth it",en:"Very common spoken expression",ex:"\"Apprendre le français, ça vaut le coup!\" Natural and enthusiastic — perfect TEF energy."},
+{fr:"Ne...que = Only (not negative!)",en:"\"Je ne parle que français\" = I only speak French",ex:"This confuses learners in listening — it's not a negation! \"Il n'a que 20 ans\" = He's only 20."},
+{fr:"\"Quant à\" = As for / Regarding",en:"Elegant topic-changer",ex:"\"Quant à l'environnement, je pense que...\" Perfect for structuring TEF Section B arguments."},
+{fr:"\"Au fur et à mesure\" = Gradually",en:"Shows advanced vocabulary",ex:"\"Mon français s'améliore au fur et à mesure.\" Impressive in a TEF monologue about your learning."},
+{fr:"\"Voire\" = Or even / Indeed",en:"One-word level booster",ex:"\"C'est difficile, voire impossible.\" Immediately elevates your speaking level."},
+{fr:"\"Franchement\" = Honestly / Frankly",en:"Opinion-strengthener for speaking",ex:"\"Franchement, je trouve que c'est une bonne idée.\" Shows confidence in TEF monologue."},
+{fr:"\"D'ailleurs\" = Besides / Moreover",en:"Adds a supporting point",ex:"\"J'aime Vancouver. D'ailleurs, c'est très multiculturelle.\" Perfect for building arguments."},
+{fr:"\"Autrement dit\" = In other words",en:"Rephrasing tool",ex:"\"C'est complexe, autrement dit, pas de solution simple.\" Use to clarify your own point in TEF."},
+{fr:"\"À propos\" = By the way",en:"Smooth topic transition",ex:"\"À propos, tu as vu le nouveau film?\" Naturally shift between topics without awkward pauses."},
+{fr:"\"Justement\" = Exactly",en:"Great for agreeing",ex:"\"Justement, c'est ce que je pense aussi.\" Use to agree before adding your own point."},
+{fr:"\"Tellement\" = So much / So",en:"Emotional intensifier",ex:"\"C'est tellement beau!\" \"J'ai tellement appris.\" Shows emotional range in speaking."},
+{fr:"\"Carrément\" = Totally / Straight up",en:"Informal emphasis",ex:"\"C'est carrément incroyable.\" Use once in TEF to show you know colloquial French."},
+{fr:"Elision is mandatory",en:"je + ai = j'ai, le + homme = l'homme",ex:"\"Je ai\" is wrong — always \"j'ai\". In listening, words merge: \"l'université\" sounds like one word."},
+{fr:"Past participle agrees with être",en:"Must match gender and number",ex:"\"Elle est allée\" not \"allé\". \"Elles sont parties\" not \"parti\". Examiners listen for this."},
+{fr:"\"Il s'agit de\" = It's about",en:"Impersonal — very useful",ex:"\"Dans ce texte, il s'agit de l'environnement.\" Great for summarizing what you heard."},
+{fr:"Contractions are mandatory",en:"au (à+le), aux (à+les), du (de+le)",ex:"\"Je vais à le parc\" is WRONG — must be \"au parc\". Get these right every single time."},
+{fr:"\"Avoir l'habitude de\" = Used to",en:"Common B1 routine expression",ex:"\"J'ai l'habitude de me lever tôt.\" Great for describing daily routines in TEF Section A."},
+{fr:"\"Enchanté(e)\" = Nice to meet you",en:"Literally \"enchanted\"",ex:"Use in Section A: \"Bonjour, je m'appelle Sneh. Enchanté.\" Natural and polite opening."},
+{fr:"\"Tutoyer\" vs \"Vouvoyer\"",en:"Tu = informal, Vous = formal",ex:"Use \"vous\" with TEF examiner unless told otherwise. \"Pourriez-vous répéter?\" Shows respect."},
+{fr:"H aspiré vs H muet",en:"Some H words block liaison",ex:"\"Les‿hommes\" (liaison) but \"Les | héros\" (no liaison). Affects word boundaries in listening."},
+{fr:"Reflexive verbs change meaning",en:"Se + verb = different meaning",ex:"Trouver = find, se trouver = be located. Mettre = put, se mettre à = start. Rendre = return, se rendre compte = realize."},
+{fr:"Futur proche is your friend",en:"Aller + infinitive = going to",ex:"\"Je vais étudier\" is easier than \"J'étudierai\" and more natural in spoken French. Examiners accept both."},
+{fr:"\"Intonation rises for yes/no\"",en:"French melody changes by question type",ex:"Statement: \"Tu viens.\" (flat). Yes/no: \"Tu viens?\" (rises). This pattern helps in both speaking AND listening."},
+{fr:"French doesn't have continuous",en:"\"I am eating\" = \"je mange\"",ex:"Context tells which. \"En train de\" adds emphasis: \"Je suis en train de manger\" = I'm currently eating."},
+{fr:"\"N'est-ce pas?\" is too formal",en:"Use \"non?\" or \"hein?\" instead",ex:"\"C'est intéressant, non?\" Much more natural in TEF speaking than \"n'est-ce pas\"."}
+];
+
+function newTip(){const t=TIPS[Math.floor(Math.random()*TIPS.length)];document.getElementById('tFr').textContent=t.fr;document.getElementById('tEn').textContent=t.en;document.getElementById('tEx').textContent=t.ex}
+newTip();
+
+// ===== TIMER =====
+let tmInt=null,tmSec=0,tmTot=0,tmOn=false;
+function tmStart(name,mins){
+tmSec=mins*60;tmTot=tmSec;tmOn=false;clearInterval(tmInt);
+document.getElementById('timerCard').classList.add('active');
+document.getElementById('tmName').textContent=name;
+document.getElementById('tmToggle').textContent='Start';
+tmUpd();
+document.getElementById('timerCard').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function tmToggle(){
+if(tmOn){clearInterval(tmInt);tmOn=false;document.getElementById('tmToggle').textContent='Resume'}
+else{tmOn=true;document.getElementById('tmToggle').textContent='Pause';
+tmInt=setInterval(()=>{tmSec--;tmUpd();if(tmSec<=0){clearInterval(tmInt);tmOn=false;
+document.getElementById('tmDisp').textContent='Done!';
+document.getElementById('tmName').textContent+=' ✓';
+if(navigator.vibrate)navigator.vibrate([200,100,200,100,200]);
+const c=document.getElementById('timerCard');c.style.borderColor='var(--green)';c.style.boxShadow='0 0 30px rgba(74,222,128,0.15)';
+setTimeout(()=>{c.style.borderColor='';c.style.boxShadow=''},4000)}},1000)}}
+function tmStop(){clearInterval(tmInt);tmOn=false;tmSec=0;document.getElementById('timerCard').classList.remove('active')}
+function tmUpd(){const m=Math.floor(tmSec/60),s=tmSec%60;document.getElementById('tmDisp').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');document.getElementById('tmFill').style.width=(tmTot>0?(tmSec/tmTot*100):0)+'%'}
+
+// ===== DATA =====
+const DAYS=[
+{date:'2026-03-09',label:'Mon Mar 9',shift:'OFF',pc:'pill-off',hrs:8,sessions:[
+{name:'Session 1',time:'08:00–10:00',dur:120,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'TEF Listening Format Intro',d:'2 full TEF listening sections on PrepMyFuture. Learn the 4 types: short messages, conversations, radio. Re-listen to missed questions.'},
+{tag:'sk-speak',tl:'Speak',n:'Section A: Self-Introduction',d:'Record: "Présentez-vous", "Parlez de votre travail", "Décrivez votre ville". 2 min each. Replay, fix, redo 3×.'}]},
+{name:'Session 2',time:'10:30–12:30',dur:120,tasks:[
+{tag:'sk-vocab',tl:'Vocab',n:'B1 Connectors + Daily Life',d:'parce que, puisque, donc, alors, cependant, pourtant, d\'abord, ensuite, enfin. Plus 50 flashcards: santé, transports, logement, travail.'},
+{tag:'sk-listen',tl:'Listen',n:'Video Immersion',d:'"Extra en français" YouTube with FR subs. Re-watch without. Write every new word.'}]},
+{name:'Session 3',time:'14:00–15:30',dur:90,tasks:[
+{tag:'sk-speak',tl:'Speak',n:'Section B: Opinion Monologue',d:'"Les réseaux sociaux: bons ou mauvais?" opinion → 2 arguments → example → conclusion. 5 min. Repeat 3×.'}]},
+{name:'Session 4',time:'16:00–17:30',dur:90,tasks:[
+{tag:'sk-vocab',tl:'Vocab',n:'Opinion Phrases Bank',d:'"À mon avis...", "Je pense que...", "Il me semble que...", "D\'un côté... de l\'autre...", "En conclusion..."'},
+{tag:'sk-speak',tl:'Speak',n:'Shadowing Exercise',d:'30-sec news clip → pause → repeat. Match rhythm and intonation. 45 min.'}]}]},
+{date:'2026-03-10',label:'Tue Mar 10',shift:'OFF',pc:'pill-off',hrs:8,sessions:[
+{name:'Session 1',time:'08:00–09:30',dur:90,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Speed Listening',d:'RFI at 1.25× for 30 min. Then TEF section at normal speed — feels easier.'},
+{tag:'sk-speak',tl:'Speak',n:'5-Min Non-Stop',d:'5 min timer. French without stopping. Hobbies, family, routine, job, Canada.'}]},
+{name:'Session 2',time:'10:00–12:00',dur:120,tasks:[
+{tag:'sk-mock',tl:'Mock',n:'⚡ BASELINE Test',d:'Listening (40 min) + speaking (15 min). Exam conditions. WRITE YOUR SCORE. This is day zero.'}]},
+{name:'Session 3',time:'13:30–15:00',dur:90,tasks:[
+{tag:'sk-vocab',tl:'Vocab',n:'Numbers, Dates, Prices',d:'Drill 1-1000, dates, times, prices. "Deux cent trente-sept" — instant recognition.'},
+{tag:'sk-listen',tl:'Listen',n:'Dictation + Gap Fill',d:'TV5Monde A2-B1 exercises. Fill missing words from audio.'}]},
+{name:'Session 4',time:'15:30–17:00',dur:90,tasks:[
+{tag:'sk-speak',tl:'Speak',n:'Pronunciation Clinic',d:'French "r", nasals (bon/bien/brun), "u" vs "ou". Record + compare with native. 45 min.'}]}]},
+{date:'2026-03-11',label:'Wed Mar 11',shift:'REST',pc:'pill-rest',hrs:0,sessions:[
+{name:'Rest',time:'All day',dur:0,tasks:[
+{tag:'',tl:'',n:'Rest & Recovery',d:'No study. Brain consolidates during rest. French music if you want. Come back stronger.'}]}]},
+{date:'2026-03-12',label:'Thu Mar 12',shift:'15:00',pc:'pill-work',hrs:4,sessions:[
+{name:'Session 1',time:'07:30–09:00',dur:90,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Long Conversations',d:'Hardest section. Listen 2×, answer, check. Who speaks, what they want, what they decide. 3 sets.'},
+{tag:'sk-speak',tl:'Speak',n:'Roleplay: Argue a Position',d:'"Disagree with a work rule — explain why." Connectors. Record 3 attempts.'}]},
+{name:'Session 2',time:'09:30–11:30',dur:120,tasks:[
+{tag:'sk-vocab',tl:'Vocab',n:'TEF Themes',d:'Environment, technology, education, health, travel — 10 words per topic.'},
+{tag:'sk-listen',tl:'Listen',n:'Radio Immersion',d:'Radio Canada 1 hr. Build familiarity with natural speed.'}]},
+{name:'Commute',time:'14:15',dur:0,tasks:[
+{tag:'',tl:'',n:'🚗 Drive to work',d:'Nasal vowels: on, en, an, in. Repeat: maison, enfant, important.'}]}]},
+{date:'2026-03-13',label:'Fri Mar 13',shift:'15:00',pc:'pill-work',hrs:4,sessions:[
+{name:'Session 1',time:'07:30–09:00',dur:90,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Detail Catching',d:'Announcements: times, prices, names, locations. TEF loves specific details.'},
+{tag:'sk-speak',tl:'Speak',n:'Section A: Interview',d:'5-min personal questions: why Canada, neighbourhood, memorable trip, typical day.'}]},
+{name:'Session 2',time:'09:30–11:30',dur:120,tasks:[
+{tag:'sk-mock',tl:'Mock',n:'Listening Mock #2',d:'Compare with baseline. Which section is weakest? Focus there.'},
+{tag:'sk-vocab',tl:'Vocab',n:'Survival Phrases',d:'"Pourriez-vous répéter?", "Je voudrais ajouter...", "C\'est-à-dire que..."'}]},
+{name:'Commute',time:'14:15',dur:0,tasks:[
+{tag:'',tl:'',n:'🚗 Drive to work',d:'French music: Stromae, Indila, Zaz.'}]}]},
+{date:'2026-03-14',label:'Sat Mar 14',shift:'OFF',pc:'pill-off',hrs:8,sessions:[
+{name:'Session 1',time:'08:00–10:00',dur:120,tasks:[
+{tag:'sk-mock',tl:'Mock',n:'Full Mock: Listen + Speak',d:'40 min listening → 15 min speaking. No breaks. Back-to-back pressure.'},
+{tag:'sk-speak',tl:'Speak',n:'Weak Point Attack',d:'Review ALL recordings. Repeated mistakes? Drill those for 1 hour.'}]},
+{name:'Session 2',time:'10:30–12:30',dur:120,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Podcast Deep Dive ×2',d:'Two 20-min podcasts. French summaries. Re-listen + fill gaps.'}]},
+{name:'Session 3',time:'14:00–15:30',dur:90,tasks:[
+{tag:'sk-vocab',tl:'Vocab',n:'B1 Grammar Blitz',d:'Passé composé vs imparfait. Conditionnel. "Si + imparfait". 10 sentences each.'}]},
+{name:'Session 4',time:'16:00–18:00',dur:120,tasks:[
+{tag:'sk-speak',tl:'Speak',n:'iTalki Conversation',d:'30-45 min with French speaker. Ask for corrections.'},
+{tag:'sk-listen',tl:'Listen',n:'French Film',d:'Movie with FR subs. Long-form listening stamina.'}]}]},
+{date:'2026-03-15',label:'Sun Mar 15',shift:'OFF',pc:'pill-off',hrs:8,
+reminder:'Check May exam registration — Edmonton, Victoria, Calgary, Kelowna.',
+sessions:[
+{name:'Session 1',time:'08:00–10:00',dur:120,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Sections 3 & 4',d:'Radio/media — hardest. Main idea, opinion, details. 3 sections.'},
+{tag:'sk-speak',tl:'Speak',n:'Debate Both Sides',d:'"Interdire les voitures?" FOR then AGAINST, 3 min each.'}]},
+{name:'Session 2',time:'10:30–12:30',dur:120,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Speed → Normal',d:'1.25× for 20 min then normal speed. Track accuracy jump.'},
+{tag:'sk-speak',tl:'Speak',n:'Monologues ×5',d:'Random topics. 3 min each. No pauses >3 sec. Record all.'}]},
+{name:'Session 3',time:'14:00–16:00',dur:120,tasks:[
+{tag:'sk-vocab',tl:'Vocab',n:'Transition Words',d:'Premièrement, en revanche, par conséquent, en effet, néanmoins.'}]},
+{name:'Session 4',time:'16:30–18:00',dur:90,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Passive Immersion',d:'2 hrs French: podcasts, YouTube, music. Enjoyable ear stamina.'}]}]},
+{date:'2026-03-16',label:'Mon Mar 16',shift:'15:00',pc:'pill-work',hrs:4,sessions:[
+{name:'Session 1',time:'07:30–09:30',dur:120,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Mock at 1.1× Speed',d:'Full mock sped up. Redo normal — catch more. Review wrong answers.'},
+{tag:'sk-speak',tl:'Speak',n:'Random Topics',d:'10 topics on paper, pick blind. 2 min each. No prep.'}]},
+{name:'Session 2',time:'10:00–12:00',dur:120,tasks:[
+{tag:'sk-vocab',tl:'Vocab',n:'Natural Expressions',d:'"Ça dépend", "en fait", "quand même", "tout à fait", "au contraire".'},
+{tag:'sk-listen',tl:'Listen',n:'Detail Extraction ×5',d:'5 clips. Who, what, where, when, why.'}]},
+{name:'Commute',time:'14:15',dur:0,tasks:[
+{tag:'',tl:'',n:'🚗 Drive to work',d:'Describe your day in French aloud.'}]}]},
+{date:'2026-03-17',label:'Tue Mar 17',shift:'15:00',pc:'pill-work',hrs:4,sessions:[
+{name:'Session 1',time:'07:30–09:30',dur:120,tasks:[
+{tag:'sk-mock',tl:'Mock',n:'Listening Mock #3',d:'Score trend check. Which section dragging you down?'},
+{tag:'sk-speak',tl:'Speak',n:'15-Min Speaking Sim',d:'5 min interview + 10 min monologue. Grade yourself.'}]},
+{name:'Session 2',time:'10:00–12:00',dur:120,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Announcements',d:'Airport/train on YouTube. Times, platforms, delays.'},
+{tag:'sk-vocab',tl:'Vocab',n:'Polite Forms',d:'"Je voudrais...", "Pourriez-vous...", "Il faudrait que..."'}]},
+{name:'Commute',time:'14:15',dur:0,tasks:[
+{tag:'',tl:'',n:'🚗 Drive to work',d:'Shadowing: Coffee Break French.'}]}]},
+{date:'2026-03-18',label:'Wed Mar 18',shift:'15:00',pc:'pill-work',hrs:4,sessions:[
+{name:'Session 1',time:'07:30–09:30',dur:120,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Weak Section ×5',d:'Lowest-scoring section — 5 sets. Quantity = pattern recognition.'},
+{tag:'sk-speak',tl:'Speak',n:'Connector Drill',d:'MUST use: premièrement, deuxièmement, en revanche, par conséquent.'}]},
+{name:'Session 2',time:'10:00–12:00',dur:120,tasks:[
+{tag:'sk-vocab',tl:'Vocab',n:'Full Flashcard Review',d:'Every card from 10 days. Star what you miss.'},
+{tag:'sk-listen',tl:'Listen',n:'B1 YouTube',d:'InnerFrench or Français Authentique. 1 hr.'}]},
+{name:'Commute',time:'14:15',dur:0,tasks:[
+{tag:'',tl:'',n:'🚗 Drive to work',d:'Radio Canada passive.'}]}]},
+{date:'2026-03-19',label:'Thu Mar 19',shift:'OFF',pc:'pill-off',hrs:8,sessions:[
+{name:'Session 1',time:'08:00–10:00',dur:120,tasks:[
+{tag:'sk-mock',tl:'Mock',n:'⚡ MID-POINT Simulation',d:'Listening + speaking. Real conditions. No phone. Score yourself.'},
+{tag:'sk-speak',tl:'Speak',n:'Error Correction',d:'ALL recordings. Top 5 errors. Drill fixes.'}]},
+{name:'Session 2',time:'10:30–12:30',dur:120,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Marathon ×3',d:'3 full sections. Target: 55-60%+ for CLB 5.'}]},
+{name:'Session 3',time:'14:00–16:00',dur:120,tasks:[
+{tag:'sk-speak',tl:'Speak',n:'iTalki #2',d:'45 min. Simulate TEF format. Honest feedback.'},
+{tag:'sk-vocab',tl:'Vocab',n:'Tenses Review',d:'Présent, passé composé, imparfait, futur simple.'}]},
+{name:'Session 4',time:'16:30–18:00',dur:90,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'French Film',d:'Movie + FR subs. Note 10 new expressions.'}]}]},
+{date:'2026-03-20',label:'Fri Mar 20',shift:'OFF',pc:'pill-off',hrs:8,sessions:[
+{name:'Session 1',time:'08:00–10:30',dur:150,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Blitz ×4',d:'4 full sections. Score trend upward.'}]},
+{name:'Session 2',time:'11:00–13:00',dur:120,tasks:[
+{tag:'sk-speak',tl:'Speak',n:'Surprise Topics',d:'Immigration, cooking, neighbours, sports. 2 min each.'},
+{tag:'sk-vocab',tl:'Vocab',n:'Safety Phrases',d:'"C\'est-à-dire...", "En d\'autres termes...", "Comment dire..."'}]},
+{name:'Session 3',time:'14:00–16:00',dur:120,tasks:[
+{tag:'sk-speak',tl:'Speak',n:'Conversation #3',d:'iTalki. Grade on TEF criteria.'},
+{tag:'sk-listen',tl:'Listen',n:'Passive Immersion',d:'2 hrs French content.'}]},
+{name:'Session 4',time:'17:00–18:00',dur:60,tasks:[
+{tag:'sk-mock',tl:'Mock',n:'Evening Mock',d:'Compare with baseline. Note improvement.'}]}]},
+{date:'2026-03-21',label:'Sat Mar 21',shift:'15:00',pc:'pill-work',hrs:4,sessions:[
+{name:'Session 1',time:'07:30–09:30',dur:120,tasks:[
+{tag:'sk-mock',tl:'Mock',n:'⚡ Pre-Vacation Test',d:'Full mock. This defines your Phase 2 focus.'},
+{tag:'sk-speak',tl:'Speak',n:'Confidence Builder',d:'3 best topics. Nail them. Record clean versions.'}]},
+{name:'Session 2',time:'10:00–12:00',dur:120,tasks:[
+{tag:'sk-listen',tl:'Listen',n:'Final Weak Spot',d:'Weakest section — 3 more sets. Note TEF tricks.'},
+{tag:'sk-vocab',tl:'Vocab',n:'Phase 1 Review',d:'All vocab, connectors, grammar → reference sheet.'}]},
+{name:'Commute',time:'14:15',dur:0,tasks:[
+{tag:'',tl:'',n:'🚗 Last work commute',d:'French music. Tomorrow: full immersion begins.'}]}]}
+];
+
+// ===== STORAGE =====
+const LS='tef5_v5';
+function load(){try{return JSON.parse(localStorage.getItem(LS))||{}}catch(e){return{}}}
+function save(p){localStorage.setItem(LS,JSON.stringify(p))}
+function getToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+
+// ===== RENDER =====
+function render(){
+const el=document.getElementById('daysList');const p=load();const t=getToday();let h='';
+DAYS.forEach((day,di)=>{
+const unlocked=day.date<=t;const isToday=day.date===t;const dp=p[day.date]||{};const done=dp._done||false;
+let c='day-card reveal';
+if(!unlocked)c+=' locked';if(done)c+=' completed';if(isToday&&!done)c+=' today-active';
+h+=`<div class="${c}" id="d${di}">`;
+h+=`<div class="day-head" onclick="tog(${di})">`;
+h+=`<div class="day-left"><div class="day-name">${day.label}</div><span class="shift-pill ${day.pc}">${day.shift}</span></div>`;
+h+=`<div class="day-right"><span class="day-hrs">${day.hrs}h</span><div class="day-status"></div><span class="day-arrow">›</span></div>`;
+h+=`</div><div class="day-body">`;
+if(day.reminder)h+=`<div class="day-remind">${day.reminder}</div>`;
+
+day.sessions.forEach((sess,si)=>{
+h+=`<div class="session-block"><div class="session-header"><div class="session-info"><span class="session-name">${sess.name}</span><span class="session-time">${sess.time}</span></div>`;
+if(sess.dur>0&&unlocked&&!done)h+=`<button class="session-start-btn" onclick="event.stopPropagation();tmStart('${day.label} · ${sess.name}',${sess.dur})">⏱ ${sess.dur}m</button>`;
+h+=`</div>`;
+sess.tasks.forEach((task,ti)=>{
+const tk=si+'_'+ti;const chk=dp[tk]||false;const can=unlocked&&!done;
+h+=`<div class="task-row${chk?' done':''}">`;
+h+=`<div class="task-check${chk?' checked':''}${!can?' off':''}" ${can?`onclick="event.stopPropagation();chk(${di},'${tk}')"`:''}></div>`;
+h+=`<div class="task-content"><div class="task-title">${task.tag?`<span class="skill-tag ${task.tag}">${task.tl}</span>`:''}${task.n}</div><div class="task-desc">${task.d}</div></div></div>`;
+});
+h+=`</div>`;});
+
+if(unlocked&&!done)h+=`<div class="complete-day-btn" onclick="event.stopPropagation();fin(${di})">Complete Day</div>`;
+else if(done)h+=`<div class="complete-day-btn finished">Completed ✓</div>`;
+h+=`</div></div>`;});
+el.innerHTML=h;
+DAYS.forEach((day,di)=>{if(day.date===t){const e=document.getElementById('d'+di);if(e&&!e.classList.contains('completed'))e.classList.add('expanded')}});
+stats(p);initObserver();
+}
+
+function tog(di){const e=document.getElementById('d'+di);if(e&&!e.classList.contains('locked'))e.classList.toggle('expanded')}
+function chk(di,key){const p=load();const k=DAYS[di].date;if(!p[k])p[k]={};p[k][key]=!p[k][key];save(p);render()}
+function fin(di){const p=load();const k=DAYS[di].date;if(!p[k])p[k]={};DAYS[di].sessions.forEach((s,si)=>{s.tasks.forEach((_,ti)=>{p[k][si+'_'+ti]=true})});p[k]._done=true;save(p);render()}
+
+function stats(p){
+const exam=new Date('2026-04-08');const now=new Date();const diff=Math.ceil((exam-now)/864e5);
+document.getElementById('daysLeft').textContent=Math.max(0,diff);
+let dc=0,hc=0;const total=DAYS.length;const totalH=DAYS.reduce((s,d)=>s+d.hrs,0);
+DAYS.forEach(d=>{if(p[d.date]&&p[d.date]._done){dc++;hc+=d.hrs}});
+const pct=Math.round(dc/total*100);
+document.getElementById('daysDone').textContent=dc;document.getElementById('hrsDone').textContent=hc;
+document.getElementById('pPct').textContent=pct+'%';document.getElementById('pFill').style.width=pct+'%';
+document.getElementById('pSub').textContent=`${dc} / ${total} days · ${hc} of ${totalH} hrs`;
+}
+
+// ===== SCROLL REVEAL =====
+function initObserver(){
+const els=document.querySelectorAll('.reveal:not(.visible)');
+const obs=new IntersectionObserver((entries)=>{
+entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>{e.target.classList.add('visible')},i*60);obs.unobserve(e.target)}})
+},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+els.forEach(el=>obs.observe(el));
+}
+
+render();
+document.addEventListener('DOMContentLoaded',initObserver);
+</script>
+</body>
+</html>
